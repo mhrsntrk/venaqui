@@ -2,7 +2,7 @@ project_name: venaqui
 
 builds:
   - id: venaqui
-    main: ./cmd/venaqui
+    main: cmd/venaqui
     binary: venaqui
     goos:
       - linux
