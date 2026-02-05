@@ -167,18 +167,22 @@ func run(cmd *cobra.Command, args []string) {
 			os.Exit(1)
 		}
 
-		// Check if this is a Real-Debrid direct download link (real-debrid.com/d/...)
-		// These links are already direct and don't need unrestricting
-		// Only hoster links need to be unrestricted via /unrestrict/link
-		if strings.Contains(downloadLink, "real-debrid.com/d/") || strings.Contains(downloadLink, "rdeb.io") {
-			// Real-Debrid direct download link - use it directly
+		// Links from /torrents/info/{id} can be:
+		// 1. Real-Debrid download page links (real-debrid.com/d/...) - need unrestricting to get direct link
+		// 2. Direct download links (rdeb.io/...) - already direct, use as-is
+		// 3. Hoster links - need unrestricting
+		
+		// Check if it's already a direct download link (rdeb.io)
+		if strings.Contains(downloadLink, "rdeb.io") {
+			// Already a direct download link - use it directly
 			unrestrictedLink = &realdebrid.UnrestrictedLink{
 				Link:     downloadLink,
 				Filename: torrentInfo.Filename,
 			}
 			filename = torrentInfo.Filename
 		} else {
-			// Hoster link - needs to be unrestricted
+			// Real-Debrid download page link (real-debrid.com/d/...) or hoster link
+			// Both need to be unrestricted to get the direct download link
 			fmt.Println("Unrestricting torrent download link...")
 			unrestrictedLink, err = rdClient.UnrestrictLink(downloadLink)
 			if err != nil {
