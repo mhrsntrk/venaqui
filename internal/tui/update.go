@@ -16,6 +16,47 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c", "esc":
 			m.quitting = true
 			return m, tea.Quit
+		case "o":
+			// Open file directly with default application when download is complete
+			if m.status != nil && m.status.IsComplete() {
+				filePath := m.status.GetFilePath()
+				
+				if filePath != "" {
+					if err := openFile(filePath); err != nil {
+						m.err = fmt.Errorf("failed to open file: %v", err)
+					}
+					// Still allow user to quit after opening
+					return m, nil
+				} else {
+					m.err = fmt.Errorf("could not determine file path")
+				}
+			}
+			return m, nil
+		case "d", "s":
+			// Show file in directory (reveal in Finder/Explorer) when download is complete
+			if m.status != nil && m.status.IsComplete() {
+				filePath := m.status.GetFilePath()
+				fileDir := m.status.GetFileDirectory()
+				
+				var err error
+				if filePath != "" {
+					// Reveal the file in Finder/Explorer (highlights the file)
+					err = revealFileInDirectory(filePath)
+				} else if fileDir != "" {
+					// Fallback to opening the directory
+					err = openDirectory(fileDir)
+				} else {
+					m.err = fmt.Errorf("could not determine download directory")
+					return m, nil
+				}
+				
+				if err != nil {
+					m.err = fmt.Errorf("failed to open directory: %v", err)
+				}
+				// Still allow user to quit after opening
+				return m, nil
+			}
+			return m, nil
 		}
 
 	case tickMsg:
@@ -30,12 +71,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case statusMsg:
 		m.status = msg
 
-		// Check if download is complete
-		if m.status.IsComplete() {
-			m.quitting = true
-			return m, tea.Quit
+		// Update speed history
+		if m.status != nil && m.status.DownloadSpeed > 0 {
+			m.speedHistory = append(m.speedHistory, m.status.DownloadSpeed)
+			if len(m.speedHistory) > m.maxHistory {
+				m.speedHistory = m.speedHistory[1:]
+			}
 		}
 
+		// Don't auto-quit on completion - let user press 'o' or 'q'
 		// Check for errors
 		if m.status.IsError() {
 			if m.status.ErrorMessage != "" {

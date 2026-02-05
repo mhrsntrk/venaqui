@@ -1,0 +1,43 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.2.0] - 2026-02-05
+
+### Added
+- **Enhanced TUI Interface**: Completely redesigned terminal user interface with modern styling
+  - Beautiful color-coded status indicators with icons (● Active, ✓ Complete, ✗ Error)
+  - Boxed sections with rounded borders for better organization
+  - Two-column statistics layout for improved readability
+- **Advanced Statistics Display**:
+  - Real-time download speed with highlighting
+  - Upload speed tracking
+  - Active connections count
+  - Elapsed time display
+  - ETA (Estimated Time to Arrival) calculation
+  - Remaining bytes display
+- **Speed History Graph**: Visual ASCII graph showing download speed trends over time (last 50 samples)
+- **Enhanced Progress Visualization**: Improved progress bar with gradient effect
+- **Post-Download Actions**:
+  - Press `o` to open downloaded file with default application
+  - Press `d` or `s` to reveal file in Finder/Explorer (highlights the file)
+  - TUI no longer auto-quits on completion, allowing user to choose action
+- **Cross-Platform File Opening**: Support for opening files and directories on macOS, Linux, and Windows
+
+### Changed
+- TUI now stays open after download completion, allowing users to interact with the downloaded file
+- Improved error handling and display
+- Better layout and visual hierarchy in the TUI
+
+### Technical Improvements
+- Enhanced aria2 status tracking with additional fields (upload speed, connections, pieces)
+- Added `GetFilePath()` and `GetFileDirectory()` methods to DownloadStatus
+- Added `GetETA()` method for time estimation
+- Improved cross-platform file system operations
+
+## [1.1.8] - Previous Release
+
+Previous releases and changes...

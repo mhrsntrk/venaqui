@@ -15,7 +15,10 @@ type Model struct {
 	filename    string
 	err         error
 	quitting    bool
+	startTime   time.Time
 	lastUpdate  time.Time
+	speedHistory []int64 // Speed history for graph (last 50 samples)
+	maxHistory   int
 }
 
 // tickMsg is sent periodically to update the UI
@@ -29,11 +32,15 @@ type errMsg error
 
 // InitialModel creates a new model with initial state
 func InitialModel(aria2Client *aria2.Client, gid, filename string) Model {
+	now := time.Now()
 	return Model{
-		aria2Client: aria2Client,
-		gid:         gid,
-		filename:    filename,
-		lastUpdate:  time.Now(),
+		aria2Client:  aria2Client,
+		gid:          gid,
+		filename:     filename,
+		startTime:    now,
+		lastUpdate:   now,
+		speedHistory: make([]int64, 0),
+		maxHistory:   50,
 	}
 }
 

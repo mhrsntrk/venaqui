@@ -6,8 +6,10 @@
 
 - 🚀 **High-Speed Downloads**: Uses aria2 with optimized settings (16 connections, 16 splits)
 - 🔓 **Real-Debrid Integration**: Automatically unrestricts premium hoster links
-- 📊 **Real-Time Progress**: Beautiful TUI with live download statistics
-- 🎨 **Polished UI**: Terminal interface built with Bubble Tea
+- 📊 **Real-Time Progress**: Beautiful TUI with live download statistics and speed history graph
+- 🎨 **Polished UI**: Modern terminal interface built with Bubble Tea featuring enhanced visuals
+- 📈 **Advanced Statistics**: ETA, elapsed time, connections, upload speed, and more
+- 🔍 **Post-Download Actions**: Open files directly or reveal in Finder/Explorer
 - 🔧 **Cross-Platform**: Works on Windows, macOS, and Linux
 - ⚙️ **Easy Configuration**: Simple YAML configuration file
 
@@ -135,8 +137,15 @@ Venaqui works with all hosters supported by Real-Debrid, including:
 
 ## TUI Controls
 
+### During Download
 - **q** or **Ctrl+C** or **Esc**: Quit the application
-- The TUI automatically exits when download completes or encounters an error
+
+### After Download Completes
+- **o**: Open the downloaded file with its default application
+- **d** or **s**: Show the file in Finder/Explorer (reveals and highlights the file)
+- **q**: Quit the application
+
+The TUI stays open after download completion, allowing you to interact with the downloaded file.
 
 ## Project Structure
 
