@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -143,22 +144,29 @@ func (c *Client) AddMagnet(magnetLink string) (*AddTorrentResponse, error) {
 func (c *Client) SelectFiles(torrentID string, fileIDs []int) error {
 	endpoint := fmt.Sprintf("%s/torrents/selectFiles/%s", c.baseURL, torrentID)
 
-	payload := map[string]interface{}{
-		"files": fileIDs,
+	// Real-Debrid API expects form data with files as "all" or comma-separated IDs
+	var filesParam string
+	if len(fileIDs) == 0 {
+		filesParam = "all"
+	} else {
+		// Convert to comma-separated string
+		fileIDStrings := make([]string, len(fileIDs))
+		for i, id := range fileIDs {
+			fileIDStrings[i] = fmt.Sprintf("%d", id)
+		}
+		filesParam = strings.Join(fileIDStrings, ",")
 	}
 
-	jsonData, err := json.Marshal(payload)
-	if err != nil {
-		return fmt.Errorf("failed to marshal request: %w", err)
-	}
+	// Use form data instead of JSON
+	formData := fmt.Sprintf("files=%s", filesParam)
 
-	req, err := http.NewRequest("PUT", endpoint, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", endpoint, strings.NewReader(formData))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
 
 	req.Header.Set("Authorization", "Bearer "+c.apiToken)
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
