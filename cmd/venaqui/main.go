@@ -167,8 +167,10 @@ func run(cmd *cobra.Command, args []string) {
 			os.Exit(1)
 		}
 
-		// Links from Real-Debrid torrents are already direct download links
-		// They don't need to be unrestricted - we can use them directly with aria2
+		// According to Real-Debrid API docs, links from /torrents/info/{id} are "Host URL"
+		// These are Real-Debrid direct download links (e.g., http://fc.rdeb.io/...)
+		// They don't need to be unrestricted via /unrestrict/link (which is for hoster links)
+		// We can use them directly with aria2
 		unrestrictedLink = &realdebrid.UnrestrictedLink{
 			Link:     downloadLink,
 			Filename: torrentInfo.Filename,

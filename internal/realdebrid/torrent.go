@@ -174,7 +174,8 @@ func (c *Client) SelectFiles(torrentID string, fileIDs []int) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 204 {
+	// According to API docs: returns 204 HTTP code, or 202 if action already done
+	if resp.StatusCode != 204 && resp.StatusCode != 202 {
 		body, _ := io.ReadAll(resp.Body)
 		var errorResp ErrorResponse
 		if err := json.Unmarshal(body, &errorResp); err == nil {
