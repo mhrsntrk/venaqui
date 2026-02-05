@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -159,19 +160,20 @@ func run(cmd *cobra.Command, args []string) {
 			os.Exit(1)
 		}
 
-		// Use the first link (or we could unrestrict all links)
-		// For now, we'll unrestrict the first link
-		fmt.Println("Unrestricting download link...")
-		unrestrictedLink, err = rdClient.UnrestrictLink(torrentInfo.Links[0])
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
+		// Get the first link and validate it
+		downloadLink := torrentInfo.Links[0]
+		if downloadLink == "" {
+			fmt.Fprintf(os.Stderr, "Download link is empty\n")
 			os.Exit(1)
 		}
 
-		filename = torrentInfo.Filename
-		if filename == "" {
-			filename = unrestrictedLink.Filename
+		// Links from Real-Debrid torrents are already direct download links
+		// They don't need to be unrestricted - we can use them directly with aria2
+		unrestrictedLink = &realdebrid.UnrestrictedLink{
+			Link:     downloadLink,
+			Filename: torrentInfo.Filename,
 		}
+		filename = torrentInfo.Filename
 	} else {
 		// Handle regular hoster link
 		fmt.Println("Unrestricting link via Real-Debrid...")
