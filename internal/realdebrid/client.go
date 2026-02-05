@@ -1,7 +1,6 @@
 package realdebrid
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
