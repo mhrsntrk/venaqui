@@ -1,0 +1,50 @@
+project_name: venaqui
+
+builds:
+  - id: venaqui
+    main: ./cmd/venaqui
+    binary: venaqui
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+
+archives:
+  - id: default
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+brews:
+  - name: venaqui
+    homepage: https://github.com/mhrsntrk/venaqui
+    description: CLI tool with TUI for downloading files via Real-Debrid and aria2
+    license: MIT
+    test: |
+      system "#{bin}/venaqui", "version"
+    dependencies:
+      - formula: aria2
+        type: required
