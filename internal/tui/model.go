@@ -9,14 +9,15 @@ import (
 
 // Model represents the TUI application state
 type Model struct {
-	aria2Client *aria2.Client
-	gid         string
-	status      *aria2.DownloadStatus
-	filename    string
-	err         error
-	quitting    bool
-	startTime   time.Time
-	lastUpdate  time.Time
+	aria2Client  *aria2.Client
+	gid          string
+	status       *aria2.DownloadStatus
+	filename     string
+	err          error
+	quitting     bool
+	startTime    time.Time
+	completionTime time.Time // Time when download completed
+	lastUpdate   time.Time
 	speedHistory []int64 // Speed history for graph (last 50 samples)
 	maxHistory   int
 }

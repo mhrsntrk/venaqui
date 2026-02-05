@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-02-05
+
+### Added
+- **Completion Statistics**: Enhanced completion screen now displays detailed download statistics
+  - Total download time
+  - Average download speed
+  - Peak download speed
+  - File size
+  - Number of connections used
+  - Completion status indicator
+
+### Removed
+- **Upload Speed Field**: Removed upload speed display from active download statistics (not applicable for download-only operations)
+
+### Changed
+- Improved completion screen layout with organized statistics box
+- Better visual presentation of download performance metrics
+
 ## [1.2.1] - 2026-02-05
 
 ### Changed

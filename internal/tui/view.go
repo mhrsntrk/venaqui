@@ -26,28 +26,7 @@ func (m Model) View() string {
 
 	// Show completion message but don't quit automatically
 	if m.status != nil && m.status.IsComplete() {
-		var s strings.Builder
-		s.WriteString(titleStyle.Render("venaqui - Download Manager"))
-		s.WriteString("\n\n")
-		s.WriteString(successStyle.Render("✓ Download complete!"))
-		s.WriteString("\n\n")
-		
-		filePath := m.status.GetFilePath()
-		fileDir := m.status.GetFileDirectory()
-		if filePath != "" || fileDir != "" {
-			pathToShow := filePath
-			if pathToShow == "" {
-				pathToShow = fileDir
-			}
-			s.WriteString(fmt.Sprintf("%s %s\n\n",
-				statLabelStyle.Render("Location:"),
-				filenameStyle.Render(pathToShow),
-			))
-		}
-		
-		s.WriteString(helpStyle.Render("Press 'o' to open file | 'd' to show in directory | 'q' to quit"))
-		s.WriteString("\n")
-		return s.String()
+		return m.renderCompletionView()
 	}
 
 	if m.status == nil {
@@ -206,13 +185,6 @@ func (m Model) renderStatsLeft() string {
 		statValueHighlightStyle.Render(speed),
 	))
 
-	// Upload speed
-	uploadSpeed := humanize.Bytes(uint64(m.status.UploadSpeed))
-	s.WriteString(fmt.Sprintf("%s %s/s\n",
-		statLabelStyle.Render("Upload:"),
-		statValueStyle.Render(uploadSpeed),
-	))
-
 	// Connections
 	s.WriteString(fmt.Sprintf("%s %s\n",
 		statLabelStyle.Render("Connections:"),
@@ -354,4 +326,104 @@ func formatDuration(d time.Duration) string {
 	hours := int(d.Hours())
 	minutes := int(d.Minutes()) % 60
 	return fmt.Sprintf("%dh %dm", hours, minutes)
+}
+
+// renderCompletionView renders the completion screen with statistics
+func (m Model) renderCompletionView() string {
+	var s strings.Builder
+	
+	// Header
+	s.WriteString(titleStyle.Render("venaqui - Download Manager"))
+	s.WriteString("\n\n")
+	
+	// Success message
+	s.WriteString(successStyle.Render("✓ Download complete!"))
+	s.WriteString("\n\n")
+	
+	// File info box
+	filePath := m.status.GetFilePath()
+	fileDir := m.status.GetFileDirectory()
+	if filePath != "" || fileDir != "" {
+		pathToShow := filePath
+		if pathToShow == "" {
+			pathToShow = fileDir
+		}
+		fileBox := boxStyle.Render(
+			fmt.Sprintf("%s %s",
+				statLabelStyle.Render("Location:"),
+				filenameStyle.Render(pathToShow),
+			),
+		)
+		s.WriteString(fileBox)
+		s.WriteString("\n\n")
+	}
+	
+	// Completion statistics
+	statsBox := boxStyle.Render(m.renderCompletionStats())
+	s.WriteString(statsBox)
+	s.WriteString("\n\n")
+	
+	// Help text
+	s.WriteString(helpStyle.Render("Press 'o' to open file | 'd' to show in directory | 'q' to quit"))
+	s.WriteString("\n")
+	
+	return s.String()
+}
+
+// renderCompletionStats renders statistics for completed download
+func (m Model) renderCompletionStats() string {
+	var s strings.Builder
+	
+	// Calculate total time
+	var totalTime time.Duration
+	if !m.completionTime.IsZero() {
+		totalTime = m.completionTime.Sub(m.startTime)
+	} else {
+		// Fallback to current time if completion time not set
+		totalTime = time.Since(m.startTime)
+	}
+	
+	// Calculate average speed
+	totalBytes := m.status.TotalLength
+	var avgSpeed int64
+	if totalTime.Seconds() > 0 {
+		avgSpeed = int64(float64(totalBytes) / totalTime.Seconds())
+	}
+	
+	// Find peak speed from history
+	var peakSpeed int64
+	for _, speed := range m.speedHistory {
+		if speed > peakSpeed {
+			peakSpeed = speed
+		}
+	}
+	
+	// Left column
+	leftStats := fmt.Sprintf("%s %s\n%s %s\n%s %s",
+		statLabelStyle.Render("Total Time:"),
+		statValueStyle.Render(formatDuration(totalTime)),
+		statLabelStyle.Render("File Size:"),
+		statValueStyle.Render(humanize.Bytes(uint64(totalBytes))),
+		statLabelStyle.Render("Peak Speed:"),
+		statValueHighlightStyle.Render(humanize.Bytes(uint64(peakSpeed))+"/s"),
+	)
+	
+	// Right column
+	rightStats := fmt.Sprintf("%s %s\n%s %s\n%s %s",
+		statLabelStyle.Render("Avg Speed:"),
+		statValueHighlightStyle.Render(humanize.Bytes(uint64(avgSpeed))+"/s"),
+		statLabelStyle.Render("Connections:"),
+		statValueStyle.Render(fmt.Sprintf("%d", m.status.Connections)),
+		statLabelStyle.Render("Status:"),
+		statusCompleteStyle.Render("✓ Complete"),
+	)
+	
+	// Combine columns
+	s.WriteString(lipgloss.JoinHorizontal(lipgloss.Left,
+		leftStats,
+		strings.Repeat(" ", 4),
+		rightStats,
+	))
+	
+	return s.String()
 }

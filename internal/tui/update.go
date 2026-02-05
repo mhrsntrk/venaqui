@@ -79,6 +79,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
+		// Track completion time
+		if m.status != nil && m.status.IsComplete() && m.completionTime.IsZero() {
+			m.completionTime = time.Now()
+		}
+
 		// Don't auto-quit on completion - let user press 'o' or 'q'
 		// Check for errors
 		if m.status.IsError() {
