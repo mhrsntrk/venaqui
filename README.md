@@ -243,8 +243,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - Download queue management
 - Pause/resume functionality
 - Download history
-- Bandwidth limiting
-- Torrent magnet link support
-- Automatic file verification
 - Notifications on completion
-- Dark/light theme switching
