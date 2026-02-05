@@ -134,9 +134,9 @@ func run(cmd *cobra.Command, args []string) {
 
 		// Select all files if needed
 		if torrentInfo.Status == "waiting_files_selection" {
-			fileIDs := []string{}
+			fileIDs := []int{}
 			for _, file := range torrentInfo.Files {
-				fileIDs = append(fileIDs, fmt.Sprintf("%d", file.ID))
+				fileIDs = append(fileIDs, file.ID)
 			}
 			if len(fileIDs) > 0 {
 				fmt.Println("Selecting files...")

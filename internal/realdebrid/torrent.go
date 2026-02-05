@@ -139,8 +139,8 @@ func (c *Client) AddMagnet(magnetLink string) (*AddTorrentResponse, error) {
 	return &result, nil
 }
 
-// SelectFiles selects all files in a torrent (selects all files by default)
-func (c *Client) SelectFiles(torrentID string, fileIDs []string) error {
+// SelectFiles selects files in a torrent
+func (c *Client) SelectFiles(torrentID string, fileIDs []int) error {
 	endpoint := fmt.Sprintf("%s/torrents/selectFiles/%s", c.baseURL, torrentID)
 
 	payload := map[string]interface{}{
@@ -152,7 +152,7 @@ func (c *Client) SelectFiles(torrentID string, fileIDs []string) error {
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("PUT", endpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -235,9 +235,9 @@ func (c *Client) WaitForTorrentReady(torrentID string, maxWait time.Duration) (*
 			return nil, fmt.Errorf("torrent failed: %s", info.Filename)
 		case "waiting_files_selection":
 			// Need to select files first
-			fileIDs := []string{}
+			fileIDs := []int{}
 			for _, file := range info.Files {
-				fileIDs = append(fileIDs, fmt.Sprintf("%d", file.ID))
+				fileIDs = append(fileIDs, file.ID)
 			}
 			if len(fileIDs) > 0 {
 				if err := c.SelectFiles(torrentID, fileIDs); err != nil {
