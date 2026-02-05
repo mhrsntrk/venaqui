@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -166,20 +167,30 @@ func run(cmd *cobra.Command, args []string) {
 			os.Exit(1)
 		}
 
-		// According to Real-Debrid API docs, links from /torrents/info/{id} are "Host URL"
-		// These are hoster links that need to be unrestricted to get the actual download link
-		fmt.Println("Unrestricting torrent download link...")
-		unrestrictedLink, err = rdClient.UnrestrictLink(downloadLink)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
-			fmt.Fprintf(os.Stderr, "Link: %s\n", downloadLink)
-			os.Exit(1)
-		}
-
-		// Use filename from torrent info, fallback to unrestricted link filename
-		filename = torrentInfo.Filename
-		if filename == "" {
-			filename = unrestrictedLink.Filename
+		// Check if this is a Real-Debrid direct download link (real-debrid.com/d/...)
+		// These links are already direct and don't need unrestricting
+		// Only hoster links need to be unrestricted via /unrestrict/link
+		if strings.Contains(downloadLink, "real-debrid.com/d/") || strings.Contains(downloadLink, "rdeb.io") {
+			// Real-Debrid direct download link - use it directly
+			unrestrictedLink = &realdebrid.UnrestrictedLink{
+				Link:     downloadLink,
+				Filename: torrentInfo.Filename,
+			}
+			filename = torrentInfo.Filename
+		} else {
+			// Hoster link - needs to be unrestricted
+			fmt.Println("Unrestricting torrent download link...")
+			unrestrictedLink, err = rdClient.UnrestrictLink(downloadLink)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
+				fmt.Fprintf(os.Stderr, "Link: %s\n", downloadLink)
+				os.Exit(1)
+			}
+			// Use filename from torrent info, fallback to unrestricted link filename
+			filename = torrentInfo.Filename
+			if filename == "" {
+				filename = unrestrictedLink.Filename
+			}
 		}
 	} else {
 		// Handle regular hoster link
