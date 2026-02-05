@@ -29,7 +29,7 @@ go.work
 Thumbs.db
 
 # Build output
-venaqui
+/venaqui
 bin/
 
 # Configuration (may contain sensitive tokens)
