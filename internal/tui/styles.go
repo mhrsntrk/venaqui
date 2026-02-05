@@ -5,16 +5,16 @@ import (
 )
 
 var (
-	// Color palette
-	primaryColor    = lipgloss.Color("#00D9FF")
-	secondaryColor  = lipgloss.Color("#FF6B9D")
-	successColor   = lipgloss.Color("#4CAF50")
-	warningColor   = lipgloss.Color("#FFC107")
-	errorColor     = lipgloss.Color("#F44336")
-	textColor      = lipgloss.Color("#E0E0E0")
-	dimTextColor   = lipgloss.Color("#757575")
-	borderColor    = lipgloss.Color("#424242")
-	backgroundColor = lipgloss.Color("#1E1E1E")
+	// Color palette - harmonized around primary red (#EF4444)
+	primaryColor    = lipgloss.Color("#EF4444") // Red primary
+	secondaryColor  = lipgloss.Color("#F87171") // Lighter red/pink accent
+	successColor   = lipgloss.Color("#10B981") // Emerald green (complements red)
+	warningColor   = lipgloss.Color("#F59E0B") // Amber (works with red)
+	errorColor     = lipgloss.Color("#DC2626") // Darker red for errors
+	textColor      = lipgloss.Color("#F3F4F6") // Light gray text
+	dimTextColor   = lipgloss.Color("#9CA3AF") // Medium gray for dim text
+	borderColor    = lipgloss.Color("#4B5563") // Darker gray for borders
+	backgroundColor = lipgloss.Color("#1F2937") // Dark background
 
 	// Title style
 	titleStyle = lipgloss.NewStyle().

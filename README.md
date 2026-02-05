@@ -1,6 +1,8 @@
-# Venaqui
+# venaqui
 
-**Venaqui** is a command-line tool with a Terminal User Interface (TUI) that leverages Real-Debrid premium links and aria2 for high-speed downloads. The tool provides real-time download progress, statistics, and a polished user experience.
+**venaqui** is a command-line tool with a Terminal User Interface (TUI) that leverages Real-Debrid premium links and aria2 for high-speed downloads. The tool provides real-time download progress, statistics, and a polished user experience.
+
+> **About the name**: "venaqui" comes from Spanish, meaning "come here" (ven aquí). It's an invitation for your downloads to come to you quickly and efficiently.
 
 ## Features
 
@@ -45,7 +47,7 @@ Download from [aria2 official website](https://aria2.github.io/) and add to PATH
 
 ### Homebrew (macOS) - Recommended
 
-The easiest way to install Venaqui on macOS is via Homebrew:
+The easiest way to install venaqui on macOS is via Homebrew:
 
 ```bash
 # Install via Homebrew tap
@@ -121,7 +123,7 @@ venaqui "https://1fichier.com/example" "$HOME/Downloads/Movies"
 
 ### Supported Hosters
 
-Venaqui works with all hosters supported by Real-Debrid, including:
+venaqui works with all hosters supported by Real-Debrid, including:
 - MEGA
 - 1fichier
 - Rapidgator
@@ -130,7 +132,7 @@ Venaqui works with all hosters supported by Real-Debrid, including:
 
 ## How It Works
 
-1. **Link Unrestriction**: Venaqui sends your hoster link to Real-Debrid API
+1. **Link Unrestriction**: venaqui sends your hoster link to Real-Debrid API
 2. **Direct Link**: Real-Debrid returns an unrestricted direct download link
 3. **aria2 Download**: The direct link is passed to aria2 for high-speed downloading
 4. **TUI Display**: Real-time progress is shown in a beautiful terminal interface

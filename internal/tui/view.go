@@ -27,7 +27,7 @@ func (m Model) View() string {
 	// Show completion message but don't quit automatically
 	if m.status != nil && m.status.IsComplete() {
 		var s strings.Builder
-		s.WriteString(titleStyle.Render("Venaqui - Download Manager"))
+		s.WriteString(titleStyle.Render("venaqui - Download Manager"))
 		s.WriteString("\n\n")
 		s.WriteString(successStyle.Render("✓ Download complete!"))
 		s.WriteString("\n\n")
@@ -51,7 +51,7 @@ func (m Model) View() string {
 	}
 
 	if m.status == nil {
-		return titleStyle.Render("Venaqui - Download Manager") + "\n\n" +
+		return titleStyle.Render("venaqui - Download Manager") + "\n\n" +
 			"Initializing download...\n"
 	}
 
@@ -59,7 +59,7 @@ func (m Model) View() string {
 	var s strings.Builder
 
 	// Header
-	s.WriteString(titleStyle.Render("Venaqui - Download Manager"))
+	s.WriteString(titleStyle.Render("venaqui - Download Manager"))
 	s.WriteString("\n\n")
 
 	// File info box
