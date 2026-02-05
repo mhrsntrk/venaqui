@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -46,10 +48,10 @@ type UnrestrictedLink struct {
 	Filename string `json:"filename"`
 	MimeType string `json:"mimeType"`
 	Filesize int64  `json:"filesize"`
-	Link     string `json:"link"` // Direct download link
-	Host     string `json:"host"`
-	Chunks   int    `json:"chunks"`
-	Download string `json:"download"`
+	Link     string `json:"link"`     // Original link that was unrestricted
+	Host     string `json:"host"`     // Host main domain
+	Chunks   int    `json:"chunks"`   // Max chunks allowed
+	Download string `json:"download"` // Generated direct download link (use this for downloading)
 }
 
 // ErrorResponse represents an error response from the API
@@ -62,22 +64,17 @@ type ErrorResponse struct {
 func (c *Client) UnrestrictLink(link string) (*UnrestrictedLink, error) {
 	endpoint := fmt.Sprintf("%s/unrestrict/link", c.baseURL)
 
-	payload := map[string]string{
-		"link": link,
-	}
+	// Use form data instead of JSON (Real-Debrid API expects form data)
+	formData := url.Values{}
+	formData.Set("link", link)
 
-	jsonData, err := json.Marshal(payload)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal request: %w", err)
-	}
-
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", endpoint, strings.NewReader(formData.Encode()))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	req.Header.Set("Authorization", "Bearer "+c.apiToken)
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {

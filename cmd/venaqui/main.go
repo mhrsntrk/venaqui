@@ -217,8 +217,15 @@ func run(cmd *cobra.Command, args []string) {
 	defer aria2Client.Close()
 
 	// Add download to aria2
+	// Use the 'download' field from the API response, which contains the direct download link
+	// The 'link' field contains the original link, not the download link
+	downloadURL := unrestrictedLink.Download
+	if downloadURL == "" {
+		// Fallback to Link if Download is not available (for backwards compatibility)
+		downloadURL = unrestrictedLink.Link
+	}
 	fmt.Println("Starting download...")
-	gid, err := aria2Client.AddDownload(unrestrictedLink.Link, downloadDir)
+	gid, err := aria2Client.AddDownload(downloadURL, downloadDir)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Download error: %v\n", err)
 		os.Exit(1)
@@ -228,7 +235,12 @@ func run(cmd *cobra.Command, args []string) {
 	if filename == "" {
 		filename = unrestrictedLink.Filename
 		if filename == "" {
-			filename = filepath.Base(unrestrictedLink.Link)
+			// Use download URL for filename extraction if available
+			urlForFilename := downloadURL
+			if urlForFilename == "" {
+				urlForFilename = unrestrictedLink.Link
+			}
+			filename = filepath.Base(urlForFilename)
 		}
 	}
 
