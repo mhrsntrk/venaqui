@@ -40,8 +40,8 @@ Download from [aria2 official website](https://aria2.github.io/) and add to PATH
 ### 2. Get Real-Debrid API Token
 
 1. Sign up for a [Real-Debrid account](http://real-debrid.com/?id=17216837) (referral link)
-2. Visit [API Token page](https://real-debrid.com/apitoken)
-3. Copy your API token
+2. Visit [My Devices page](https://real-debrid.com/devices)
+3. Copy your API Private Token
 
 ## Installation
 
