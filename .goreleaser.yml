@@ -38,12 +38,17 @@ changelog:
       - '^docs:'
       - '^test:'
 
-brews:
-  - name: venaqui
-    homepage: https://github.com/mhrsntrk/venaqui
-    description: CLI tool with TUI for downloading files via Real-Debrid and aria2
-    license: MIT
-    test: |
-      system "#{bin}/venaqui", "version"
-    dependencies:
-      - aria2
+# Homebrew tap configuration (uncomment after creating homebrew-venaqui repository)
+# brews:
+#   - name: venaqui
+#     homepage: https://github.com/mhrsntrk/venaqui
+#     description: CLI tool with TUI for downloading files via Real-Debrid and aria2
+#     license: MIT
+#     repository:
+#       owner: mhrsntrk
+#       name: homebrew-venaqui
+#       token: "{{ .Env.HOMEBREW_GITHUB_API_TOKEN }}"
+#     test: |
+#       system "#{bin}/venaqui", "version"
+#     dependencies:
+#       - aria2
