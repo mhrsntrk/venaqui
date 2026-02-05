@@ -97,3 +97,13 @@ func NormalizePath(path string) string {
 	// Clean the path
 	return filepath.Clean(path)
 }
+
+// IsTorrentLink checks if a URL is a torrent file link
+func IsTorrentLink(urlStr string) bool {
+	return strings.HasSuffix(strings.ToLower(urlStr), ".torrent")
+}
+
+// IsMagnetLink checks if a URL is a magnet link
+func IsMagnetLink(urlStr string) bool {
+	return strings.HasPrefix(strings.ToLower(urlStr), "magnet:")
+}

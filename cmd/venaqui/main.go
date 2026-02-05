@@ -104,12 +104,84 @@ func run(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	// Unrestrict link
-	fmt.Println("Unrestricting link via Real-Debrid...")
-	unrestrictedLink, err := rdClient.UnrestrictLink(link)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
-		os.Exit(1)
+	var unrestrictedLink *realdebrid.UnrestrictedLink
+	var filename string
+
+	// Check if this is a torrent or magnet link
+	if utils.IsTorrentLink(link) || utils.IsMagnetLink(link) {
+		// Handle torrent/magnet link
+		fmt.Println("Adding torrent to Real-Debrid...")
+		var torrentResp *realdebrid.AddTorrentResponse
+		var err error
+
+		if utils.IsMagnetLink(link) {
+			torrentResp, err = rdClient.AddMagnet(link)
+		} else {
+			torrentResp, err = rdClient.AddTorrent(link)
+		}
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
+			os.Exit(1)
+		}
+
+		// Check if files need to be selected
+		torrentInfo, err := rdClient.GetTorrentInfo(torrentResp.ID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
+			os.Exit(1)
+		}
+
+		// Select all files if needed
+		if torrentInfo.Status == "waiting_files_selection" {
+			fileIDs := []string{}
+			for _, file := range torrentInfo.Files {
+				fileIDs = append(fileIDs, fmt.Sprintf("%d", file.ID))
+			}
+			if len(fileIDs) > 0 {
+				fmt.Println("Selecting files...")
+				if err := rdClient.SelectFiles(torrentResp.ID, fileIDs); err != nil {
+					fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
+					os.Exit(1)
+				}
+			}
+		}
+
+		fmt.Println("Waiting for torrent to be processed...")
+		torrentInfo, err = rdClient.WaitForTorrentReady(torrentResp.ID, 5*time.Minute)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
+			os.Exit(1)
+		}
+
+		if len(torrentInfo.Links) == 0 {
+			fmt.Fprintf(os.Stderr, "No download links available from torrent\n")
+			os.Exit(1)
+		}
+
+		// Use the first link (or we could unrestrict all links)
+		// For now, we'll unrestrict the first link
+		fmt.Println("Unrestricting download link...")
+		unrestrictedLink, err = rdClient.UnrestrictLink(torrentInfo.Links[0])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
+			os.Exit(1)
+		}
+
+		filename = torrentInfo.Filename
+		if filename == "" {
+			filename = unrestrictedLink.Filename
+		}
+	} else {
+		// Handle regular hoster link
+		fmt.Println("Unrestricting link via Real-Debrid...")
+		var err error
+		unrestrictedLink, err = rdClient.UnrestrictLink(link)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "RD API error: %v\n", err)
+			os.Exit(1)
+		}
+		filename = unrestrictedLink.Filename
 	}
 
 	// Initialize aria2 client
@@ -129,9 +201,11 @@ func run(cmd *cobra.Command, args []string) {
 	}
 
 	// Start TUI
-	filename := unrestrictedLink.Filename
 	if filename == "" {
-		filename = filepath.Base(unrestrictedLink.Link)
+		filename = unrestrictedLink.Filename
+		if filename == "" {
+			filename = filepath.Base(unrestrictedLink.Link)
+		}
 	}
 
 	model := tui.InitialModel(aria2Client, gid, filename)
