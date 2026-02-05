@@ -44,6 +44,7 @@ brews:
     homepage: https://github.com/mhrsntrk/venaqui
     description: CLI tool with TUI for downloading files via Real-Debrid and aria2
     license: MIT
+    directory: Formula
     repository:
       owner: mhrsntrk
       name: homebrew-venaqui
