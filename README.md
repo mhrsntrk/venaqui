@@ -57,9 +57,7 @@ Or install directly from the formula:
 brew install mhrsntrk/venaqui/venaqui
 ```
 
-**Note:** 
-- Homebrew will automatically install `aria2` as a dependency
-- See [HOMEBREW.md](HOMEBREW.md) for detailed setup instructions if you want to create your own tap
+**Note:** Homebrew will automatically install `aria2` as a dependency.
 
 ### Build from Source
 

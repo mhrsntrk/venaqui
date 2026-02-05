@@ -30,7 +30,9 @@ Thumbs.db
 
 # Build output
 /venaqui
+venaqui
 bin/
+dist/
 
 # Configuration (may contain sensitive tokens)
 config.yaml
