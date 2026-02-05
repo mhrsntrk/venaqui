@@ -18,6 +18,14 @@ jobs:
         with:
           go-version: '1.22'
 
+      - name: Debug - Check file structure
+        run: |
+          pwd
+          ls -la
+          ls -la cmd/
+          ls -la cmd/venaqui/
+          test -f cmd/venaqui/main.go && echo "main.go exists" || echo "main.go NOT found"
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
