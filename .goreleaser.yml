@@ -38,6 +38,11 @@ changelog:
       - '^docs:'
       - '^test:'
 
+release:
+  replace_existing_artifacts: true
+  # When true, GoReleaser will delete existing artifacts before uploading new ones
+  # This prevents 422 errors when assets already exist
+
 # Homebrew tap configuration
 brews:
   - name: venaqui
