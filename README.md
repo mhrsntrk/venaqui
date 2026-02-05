@@ -39,7 +39,7 @@ Download from [aria2 official website](https://aria2.github.io/) and add to PATH
 
 ### 2. Get Real-Debrid API Token
 
-1. Sign up for a [Real-Debrid account](https://real-debrid.com/)
+1. Sign up for a [Real-Debrid account](http://real-debrid.com/?id=17216837) (referral link)
 2. Visit [API Token page](https://real-debrid.com/apitoken)
 3. Copy your API token
 
@@ -232,7 +232,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Acknowledgments
 
-- [Real-Debrid](https://real-debrid.com/) for the premium link service
+- [Real-Debrid](http://real-debrid.com/?id=17216837) for the premium link service ([sign up with referral](http://real-debrid.com/?id=17216837))
 - [aria2](https://aria2.github.io/) for the powerful download engine
 - [Bubble Tea](https://github.com/charmbracelet/bubbletea) for the TUI framework
 
